@@ -30,11 +30,16 @@
                 background-color: black;
             }
             .gallery-item img{
-                height: 90%;
+                height: auto;
                 width: 90%;
                 margin-bottom: 5%;
                 overflow: hidden;
                 object-fit: cover;
+            }
+            .clearfix:after {
+                content: "";
+                display: table;
+                clear: both;
             }
         </style>
     </head>
@@ -75,6 +80,7 @@
                     </a>
                 </div>
             </div>
+            <div class="clearfix"></div>
         </div>
     </body>
 </html>
