@@ -19,9 +19,90 @@
 
     <body>
         <div class="main-page">
-            <canvas id="model" width="500" height="500" style="background-color: black;"></canvas>
-            <model-viewer src="accelerator model/Clinical linear accelerator - 947631/files/linac.stl" alt="Model akceleratora liniowego" shadow-intensity="1" camera-controls>
-            </model-viewer>
-            <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+            <div style="position: absolute; top: 10px; left: 10px; z-index: 1000;">  
+                <button onclick="changeColor()">Change Color</button>  
+                <button onclick="scaleUp()">Scale Up</button>  
+                <button onclick="rotateObject()">Rotate</button>  
+            </div>
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>  
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/STLLoader.js"></script>  
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script>
+
+            <script>
+                const scene = new THREE.Scene(); 
+
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);  
+                camera.position.z = 5;  
+
+                const renderer = new THREE.WebGLRenderer({ antialias: true }); 
+                renderer.setSize(window.innerWidth, window.innerHeight);  
+                document.body.appendChild(renderer.domElement);
+
+                const loader = new THREE.STLLoader();  
+
+                loader.load(  
+                    'accelerator model/Clinical linear accelerator - 947631/files/linac.stl',
+                    (geometry) => { // On load success  
+                        // material
+                        const material = new THREE.MeshStandardMaterial({  
+                            color: 0x00ff00, // Green color  
+                            roughness: 0.5,  
+                            metalness: 0.5  
+                        });  
+                    
+                        // mesh 
+                        const stlMesh = new THREE.Mesh(geometry, material);  
+                        scene.add(stlMesh); // Add mesh to scene  
+                     
+                        window.stlObject = stlMesh;  
+                    },  
+                    (xhr) => { // On progress  
+                        console.log((xhr.loaded / xhr.total * 100) + '% loaded');  
+                    },  
+                    (error) => { // On error  
+                        console.error('Error loading STL file:', error);  
+                    }  
+                );
+
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
+                scene.add(ambientLight);  
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);  
+                directionalLight.position.set(5, 5, 5);
+                scene.add(directionalLight);
+
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);  
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.05;  
+                controls.enableZoom = true;
+
+                function animate() {  
+                    requestAnimationFrame(animate);
+                    controls.update();
+                    renderer.render(scene, camera);
+                }  
+                animate()
+
+                function changeColor() {  
+                    if (window.stlObject) {  
+                        const newColor = new THREE.Color(Math.random(), Math.random(), Math.random());  
+                        window.stlObject.material.color = newColor;  
+                    }  
+                }  
+
+                function scaleUp() {  
+                    if (window.stlObject) {  
+                        window.stlObject.scale.multiplyScalar(1.1); // Multiply scale by 1.1  
+                    }  
+                }  
+
+                function rotateObject() {  
+                    if (window.stlObject) {  
+                        window.stlObject.rotation.x += 0.01;  
+                        window.stlObject.rotation.y += 0.01;  
+                    }  
+                }
+            </script>
         </div>
     </body>
