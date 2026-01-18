@@ -14,12 +14,22 @@
                 width: 75%;
             }
         </style>
+
+        <script async src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"></script>
+        <script type="importmap">
+          {
+            "imports": {
+              "three": "https://unpkg.com/three@v0.163.0/build/three.module.js",
+              "three/addons/": "https://unpkg.com/three@v0.163.0/examples/jsm/"
+            }
+          }
+        </script>
     </head>
 
     <body>
         <main>
-            <div class="container3D"></div>
-            <script type="module" src="accelerator model/script.js"></script>
+            <div class="3dmodel"></div>
+            <script type="module" src="accelerator model/main.js"></script>
         </main>
     </body>
 </html>

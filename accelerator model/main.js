@@ -1,99 +1,84 @@
-//Import the THREE.js library
-import * as THREE from "https://cdn.skypack.dev/three@0.129.0/build/three.module.js";
-// To allow for the camera to move around the scene
-import { OrbitControls } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/controls/OrbitControls.js";
-// To allow for importing the .gltf file
-import { GLTFLoader } from "https://cdn.skypack.dev/three@0.129.0/examples/jsm/loaders/GLTFLoader.js";
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-//Create a Three.JS Scene
-const scene = new THREE.Scene();
-//create a new camera with positions and angles
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-//Keep track of the mouse position, so we can make the eye move
-let mouseX = window.innerWidth / 2;
-let mouseY = window.innerHeight / 2;
-
-//Keep the 3D object on a global variable so we can access it later
-let object;
-
-//OrbitControls allow the camera to move around the scene
-let controls;
-
-//Set which object to render
-let objToRender = 'eye';
-
-//Instantiate a loader for the .gltf file
-const loader = new GLTFLoader();
-
-//Load the file
-loader.load(
-  `${objToRender}/linac.gltf`,
-  function (gltf) {
-    //If the file is loaded, add it to the scene
-    object = gltf.scene;
-    scene.add(object);
-  },
-  function (xhr) {
-    //While it is loading, log the progress
-    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-  },
-  function (error) {
-    //If there is an error, log it
-    console.error(error);
-  }
-);
-
-//Instantiate a new renderer and set its size
-const renderer = new THREE.WebGLRenderer({ alpha: true }); //Alpha: true allows for the transparent background
 renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000);
+renderer.setPixelRatio(window.devicePixelRatio);
 
-//Add the renderer to the DOM
-document.getElementById("container3D").appendChild(renderer.domElement);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-//Set how far the camera will be from the 3D model
-camera.position.z = objToRender === "dino" ? 25 : 500;
+document.body.appendChild(renderer.domElement);
 
-//Add lights to the scene, so we can actually see the 3D model
-const topLight = new THREE.DirectionalLight(0xffffff, 1); // (color, intensity)
-topLight.position.set(500, 500, 500) //top-left-ish
-topLight.castShadow = true;
-scene.add(topLight);
+const scene = new THREE.Scene();
 
-const ambientLight = new THREE.AmbientLight(0x333333, objToRender === "dino" ? 5 : 1);
-scene.add(ambientLight);
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+camera.position.set(4, 5, 11);
 
-//This adds controls to the camera, so we can rotate / zoom it with the mouse
-if (objToRender === "dino") {
-  controls = new OrbitControls(camera, renderer.domElement);
-}
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.enablePan = false;
+controls.minDistance = 5;
+controls.maxDistance = 20;
+controls.minPolarAngle = 0.5;
+controls.maxPolarAngle = 1.5;
+controls.autoRotate = false;
+controls.target = new THREE.Vector3(0, 1, 0);
+controls.update();
 
-//Render the scene
-function animate() {
-  requestAnimationFrame(animate);
-  //Here we could add some code to update the scene, adding some automatic movement
+const groundGeometry = new THREE.PlaneGeometry(20, 20, 32, 32);
+groundGeometry.rotateX(-Math.PI / 2);
+const groundMaterial = new THREE.MeshStandardMaterial({
+  color: 0x555555,
+  side: THREE.DoubleSide
+});
+const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
+groundMesh.castShadow = false;
+groundMesh.receiveShadow = true;
+scene.add(groundMesh);
 
-  //Make the eye move
-  if (object && objToRender === "eye") {
-    //I've played with the constants here until it looked good 
-    object.rotation.y = -3 + mouseX / window.innerWidth * 3;
-    object.rotation.x = -1.2 + mouseY * 2.5 / window.innerHeight;
-  }
-  renderer.render(scene, camera);
-}
+const spotLight = new THREE.SpotLight(0xffffff, 3000, 100, 0.22, 1);
+spotLight.position.set(0, 25, 0);
+spotLight.castShadow = true;
+spotLight.shadow.bias = -0.0001;
+scene.add(spotLight);
 
-//Add a listener to the window, so we can resize the window and the camera
-window.addEventListener("resize", function () {
+const loader = new GLTFLoader().setPath('accelerator model/linac.gltf');
+loader.load('scene.gltf', (gltf) => {
+  console.log('loading model');
+  const mesh = gltf.scene;
+
+  mesh.traverse((child) => {
+    if (child.isMesh) {
+      child.castShadow = true;
+      child.receiveShadow = true;
+    }
+  });
+
+  mesh.position.set(0, 1.05, -1);
+  scene.add(mesh);
+
+  document.getElementById('3dmodel').style.display = 'none';
+}, (xhr) => {
+  console.log(`loading ${xhr.loaded / xhr.total * 100}%`);
+}, (error) => {
+  console.error(error);
+});
+
+window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
-//add mouse position listener, so we can make the eye move
-document.onmousemove = (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
 }
 
-//Start the 3D rendering
 animate();
