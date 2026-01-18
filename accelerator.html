@@ -38,6 +38,18 @@
                 const renderer = new THREE.WebGLRenderer({ antialias: true }); 
                 renderer.setSize(window.innerWidth, window.innerHeight);  
                 document.body.appendChild(renderer.domElement);
+                
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
+                scene.add(ambientLight);  
+
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);  
+                directionalLight.position.set(5, 5, 5);
+                scene.add(directionalLight);
+
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);  
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.05;  
+                controls.enableZoom = true;
 
                 const loader = new THREE.STLLoader();  
 
@@ -64,18 +76,6 @@
                         console.error('Error loading STL file:', error);  
                     }  
                 );
-
-                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); 
-                scene.add(ambientLight);  
-
-                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);  
-                directionalLight.position.set(5, 5, 5);
-                scene.add(directionalLight);
-
-                const controls = new THREE.OrbitControls(camera, renderer.domElement);  
-                controls.enableDamping = true;
-                controls.dampingFactor = 0.05;  
-                controls.enableZoom = true;
 
                 function animate() {  
                     requestAnimationFrame(animate);
