@@ -1,43 +1,49 @@
+-- Updated dane.sql for consistent naming and sample data
+
+DROP TABLE IF EXISTS lokalizacja_urzadzen;
+DROP TABLE IF EXISTS urzadzenia;
+DROP TABLE IF EXISTS szpitale;
+
 CREATE TABLE szpitale (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE,
-    location TEXT NOT NULL
+    nazwa TEXT NOT NULL UNIQUE,
+    lokalizacja TEXT NOT NULL,
+    opis TEXT
 );
 
 CREATE TABLE urzadzenia (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL UNIQUE,
-    category TEXT NOT NULL
+    nazwa TEXT NOT NULL UNIQUE,
+    kategoria TEXT NOT NULL,
+    opis TEXT
 );
 
 CREATE TABLE lokalizacja_urzadzen (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    hospital_id INTEGER NOT NULL,
-    equipment_id INTEGER NOT NULL,
-    FOREIGN KEY (szpitale_id) REFERENCES szpitale(id),
-    FOREIGN KEY (urzadzenia_id) REFERENCES urzadzenia(id)
+    szpital_id INTEGER NOT NULL,
+    urzadzenie_id INTEGER NOT NULL,
+    FOREIGN KEY (szpital_id) REFERENCES szpitale(id),
+    FOREIGN KEY (urzadzenie_id) REFERENCES urzadzenia(id)
 );
 
+INSERT INTO szpitale (nazwa, lokalizacja, opis) VALUES
+('GUMed', 'Gdańsk', 'Centrum Kliniczne Gdańskiego Uniwersytetu Medycznego'),
+('WUM', 'Warszawa', 'Centralny Szpital Kliniczny Warszawskiego Uniwersytetu Medycznego'),
+('Matka Polka', 'Łódź', 'Szpital Matki Polki w Łodzi'),
+('Copernicus', 'Gdańsk', 'Szpital Copernicus w Gdańsku');
 
-INSERT INTO hospitals (name, location) VALUES 
-('GUMed', 'Gdańsk'),
-('WUM', 'Warszawa'),
-('Matka Polka', 'Łódź'),
-('St. Mary''s Hospital', 'Los Angeles, CA'),
-('Healthcare Clinic', 'Seattle, WA');
+INSERT INTO urzadzenia (nazwa, kategoria, opis) VALUES
+('Akcelerator', 'Radioterapia', 'Nowoczesny akcelerator liniowy do radioterapii'),
+('Da Vinci', 'Chirurgia', 'Robot chirurgiczny Da Vinci'),
+('EKG', 'Kardiologia', 'Elektrokardiograf'),
+('EUS', 'Diagnostyka', 'Endosonograf'),
+('MRI', 'Diagnostyka', 'Rezonans magnetyczny'),
+('RTG', 'Diagnostyka', 'Aparat rentgenowski');
 
--- 3. Insert Sample Data into Medical Equipment Table
-INSERT INTO medical_equipment (name, category) VALUES 
-('MRI Scanner', 'Imaging'),
-('CT Scan Machine', 'Imaging'),
-('Laparoscopic System', 'Surgical/Operating Room'),
-('Surgical Robot', 'Surgical/Operating Room'),
-('Cardiac Catheterization Lab', 'Cardiology'),
-('Automated Chemistry Analyzer', 'Laboratory'),
-('Digital X-ray Machine', 'Imaging'),
-('Ultrasound Device', 'Imaging'),
-('Interventional Radiology Suite', 'Radiology'),
-('Electrocardiogram (ECG) Machine', 'Cardiology');
-
--- 4. Insert Sample Data into Equipment Locations Table
-INSERT INTO equipment_locations (hospital_id,
+INSERT INTO lokalizacja_urzadzen (szpital_id, urzadzenie_id) VALUES
+(1, 1),
+(1, 3),
+(2, 2),
+(2, 5),
+(3, 4),
+(4, 6);
