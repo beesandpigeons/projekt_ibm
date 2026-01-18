@@ -32,27 +32,27 @@
         <div class="main-page">
             <div id="wrapper">
                 <div class="model-container" id="chain-1"></div>
+                <script>
+                    const OBJ_INFO = [
+                        [
+                            'accelerator model/Clinical linear accelerator - 947631/files/linac.stl',
+                            ['chain-1'],
+                            [[0, -300, 150]],
+                            [['orange', 'white']],
+                            [1, 10000]
+                        ],
+                        [
+                            '../stl/milk_crown.stl',
+                            ['milk_crown-2'],
+                            [[100, -300, 150]],
+                            [['rainbow', 'white']],
+                            [1, 10000]
+                        ],
+                    ];
+                </script>
+                <script src="../includes/display-3dmodel.js" type="module"></script>
                 <div class="model-container" id="milk_crown-2"></div>
             </div>
         </div>
     </body>
-    <script>
-        const OBJ_INFO = [
-            [
-                'accelerator model/Clinical linear accelerator - 947631/files/linac.stl',
-                ['chain-1'],
-                [[0, -300, 150]],
-                [['orange', 'white']],
-                [1, 10000]
-            ],
-            [
-                '../stl/milk_crown.stl',
-                ['milk_crown-2'],
-                [[100, -300, 150]],
-                [['rainbow', 'white']],
-                [1, 10000]
-            ],
-        ];
-    </script>
-    <script src="../includes/display-3dmodel.js" type="module"></script>
 </html>
