@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="eng">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+        <title>COPERNICUS - IWUM</title>
+        <style>
+            body {
+                background-color: rgb(132, 177, 180);
+            }
+            .main-page{
+                background-color: rgb(241, 233, 223);
+                margin: auto;
+                width: 75%;
+                
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="main-page">
+            <canvas id="model" width="500" height="500" style="background-color: black;"></canvas>
+            <model-viewer src="accelerator model/Clinical linear accelerator - 947631/files/linac.stl" alt="Model akceleratora liniowego" shadow-intensity="1" camera-controls>
+            </model-viewer>
+            <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
+        </div>
+    </body>
