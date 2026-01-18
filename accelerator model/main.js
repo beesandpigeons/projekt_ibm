@@ -47,8 +47,8 @@ spotLight.castShadow = true;
 spotLight.shadow.bias = -0.0001;
 scene.add(spotLight);
 
-const loader = new GLTFLoader().setPath('linac.gltf');
-loader.load('scene.gltf', (gltf) => {
+const loader = new GLTFLoader().setPath('accelerator model/');
+loader.load('linac.gltf', (gltf) => {
   console.log('loading model');
   const mesh = gltf.scene;
 
