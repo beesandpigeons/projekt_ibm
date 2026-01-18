@@ -30,29 +30,90 @@
 
     <body>
         <div class="main-page">
-            <div id="wrapper">
-                <div class="model-container" id="chain-1"></div>
-                <script>
-                    const OBJ_INFO = [
-                        [
-                            'accelerator model/Clinical linear accelerator - 947631/files/linac.stl',
-                            ['chain-1'],
-                            [[0, -300, 150]],
-                            [['orange', 'white']],
-                            [1, 10000]
-                        ],
-                        [
-                            '../stl/milk_crown.stl',
-                            ['milk_crown-2'],
-                            [[100, -300, 150]],
-                            [['rainbow', 'white']],
-                            [1, 10000]
-                        ],
-                    ];
-                </script>
-                <script src="../includes/display-3dmodel.js" type="module"></script>
-                <div class="model-container" id="milk_crown-2"></div>
-            </div>
+            <div class="controls">  
+                <button onclick="changeColor()">Change Color</button>  
+                <button onclick="scaleUp()">Scale Up</button>  
+                <button onclick="rotateObject()">Rotate</button>  
+            </div>  
+
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>  
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/loaders/STLLoader.js"></script>  
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script>  
+
+            <script>  
+                // Scene, Camera, Renderer  
+                const scene = new THREE.Scene();  
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);  
+                camera.position.z = 5;  
+                const renderer = new THREE.WebGLRenderer({ antialias: true });  
+                renderer.setSize(window.innerWidth, window.innerHeight);  
+                document.body.appendChild(renderer.domElement);  
+            
+                // Lighting  
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);  
+                scene.add(ambientLight);  
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);  
+                directionalLight.position.set(5, 5, 5);  
+                scene.add(directionalLight);  
+            
+                // Orbit Controls  
+                const controls = new THREE.OrbitControls(camera, renderer.domElement);  
+                controls.enableDamping = true;  
+                controls.dampingFactor = 0.05;  
+            
+                // Load STL File  
+                const loader = new THREE.STLLoader();  
+                loader.load(  
+                    'accelerator model/Clinical linear accelerator - 947631/files/linac.stl',
+                    (geometry) => {  
+                        const material = new THREE.MeshStandardMaterial({  
+                            color: 0x00ff00,  
+                            roughness: 0.5,  
+                            metalness: 0.5  
+                        });  
+                        const stlMesh = new THREE.Mesh(geometry, material);  
+                        scene.add(stlMesh);  
+                        window.stlObject = stlMesh;  
+                    },  
+                    (xhr) => console.log((xhr.loaded / xhr.total * 100) + '% loaded'),  
+                    (error) => console.error('Error:', error)  
+                );  
+                
+                // Animation Loop  
+                function animate() {  
+                    requestAnimationFrame(animate);  
+                    controls.update();  
+                    renderer.render(scene, camera);  
+                }  
+                animate();  
+            
+                // Window Resize Handler  
+                window.addEventListener('resize', () => {  
+                    camera.aspect = window.innerWidth / window.innerHeight;  
+                    camera.updateProjectionMatrix();  
+                    renderer.setSize(window.innerWidth, window.innerHeight);  
+                });  
+            
+                // Object Manipulation Functions  
+                function changeColor() {  
+                    if (window.stlObject) {  
+                        window.stlObject.material.color.set(Math.random() * 0xffffff);  
+                    }  
+                }  
+            
+                function scaleUp() {  
+                    if (window.stlObject) {  
+                        window.stlObject.scale.multiplyScalar(1.1);  
+                    }  
+                }  
+            
+                function rotateObject() {  
+                    if (window.stlObject) {  
+                        window.stlObject.rotation.x += 0.01;  
+                        window.stlObject.rotation.y += 0.01;  
+                    }  
+                }  
+            </script>
         </div>
     </body>
 </html>
