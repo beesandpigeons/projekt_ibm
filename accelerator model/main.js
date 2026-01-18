@@ -47,10 +47,10 @@ spotLight.castShadow = true;
 spotLight.shadow.bias = -0.0001;
 scene.add(spotLight);
 
-const loader = new GLTFLoader().setPath('./model/');
-loader.load('SceneMRI.obj', (obj) => {
+const loader = new GLTFLoader().setPath('./');
+loader.load('linac.gltf', (gltf) => {
   console.log('loading model');
-  const mesh = obj.scene;
+  const mesh = gltf.scene;
 
   mesh.traverse((child) => {
     if (child.isMesh) {
